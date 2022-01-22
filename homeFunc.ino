@@ -13,12 +13,12 @@ void home(){
   Serial.println("Homing all axes");
 
   //Command motion of the full motion range in the negative direction, but don't move (call run) ) yet
-  stepper1.moveTo(-(upperLim1-lowerLim1)*stepCount*gear1);
-  stepper2.moveTo(-(upperLim2-lowerLim2)*stepCount*gear2);
-  stepper3.moveTo(-(upperLim3-lowerLim3)*stepCount*gear3);
-  stepper4.moveTo(-(upperLim4-lowerLim4)*stepCount*gear4);
-  stepper5.moveTo(-(upperLim5-lowerLim5)*stepCount*gear5);
-  stepper6.moveTo(-(upperLim6-lowerLim6)*stepCount*gear6);
+  stepper1.moveTo(-(maxAngle1-minAngle1)*stepCount*gear1);
+  stepper2.moveTo(-(maxAngle2-minAngle2)*stepCount*gear2);
+  stepper3.moveTo(-(maxAngle3-minAngle3)*stepCount*gear3);
+  stepper4.moveTo(-(maxAngle4-minAngle4)*stepCount*gear4);
+  stepper5.moveTo(-(maxAngle5-minAngle5)*stepCount*gear5);
+  stepper6.moveTo(-(maxAngle6-minAngle6)*stepCount*gear6);
 
   //Stepper 1
   int val = digitalRead(LS1);   //Check if limit swithc is pressed
@@ -72,12 +72,12 @@ void home(){
   delay(250);
 
   //Move all axis to the home position (0, center of travel right now)
-  moveCommand(1, -lowerLim1);
-  moveCommand(2, -lowerLim2);
-  moveCommand(3, -lowerLim3);
-  moveCommand(4, -lowerLim4);
-  moveCommand(5, -lowerLim5);
-  moveCommand(6, -lowerLim6);
+  moveCommand("1", -minAngle1);
+  moveCommand("2", -minAngle2);
+  moveCommand("3", -minAngle3);
+  moveCommand("4", -minAngle4);
+  moveCommand("5", -minAngle5);
+  moveCommand("6", -minAngle6);
 
   //While axes are not in the commanded position, keep calling run
   while(stepper1.currentPosition() != stepper1.targetPosition() || stepper2.currentPosition() != stepper2.targetPosition() || stepper3.currentPosition() != stepper3.targetPosition() || 

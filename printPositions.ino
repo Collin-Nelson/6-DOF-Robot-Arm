@@ -18,4 +18,7 @@ void printPos(){
 
   Serial.print("Stepper 6: ");
   Serial.println(stepper6.currentPosition()/gear6/stepCount);
+
+  Serial.print("Gripper 7: ");
+  Serial.println(gripperPos);
 }

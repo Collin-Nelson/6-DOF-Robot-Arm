@@ -5,23 +5,20 @@
 #define serial
 #define gripperCom
 #define printPosition
+#define printParameters
 #define homeOneAxis
-#define StackQueue
+#define printLimitSwitchStatus
+#define setParameters
+
+#define LS1_PIN 26
+#define LS2_PIN 27
+#define LS3_PIN 28
+#define LS4_PIN 29
+#define LS5_PIN 30
+#define LS6_PIN 31
 
 #define inputSize 48            //Maximum size of the gcode serial input string
 #define stepsPerRev 6400.0      //Number of mictosteps per revolution
-#define accel1 750
-#define accel2 750
-#define accel3 750
-#define accel4 750
-#define accel5 750
-#define accel6 750          
-#define vel1 100
-#define vel2 100
-#define vel3 100
-#define vel4 100
-#define vel5 100
-#define vel6 100
 #define minPulseWidth 25        //Set the minimum width of the step pulse in microseconds
 
 
@@ -29,7 +26,7 @@ double stepCount = stepsPerRev/360.0;    //Look at this later - this math might 
 
 //Define gearbox ratios
 #define gear1 15.3
-#define gear2 15.3*2
+#define gear2 30.6 //15.3*2
 #define gear3 13.73
 #define gear4 26.85
 #define gear5 26.85
@@ -43,29 +40,44 @@ double stepCount = stepsPerRev/360.0;    //Look at this later - this math might 
 #define home5 0.0
 #define home6 0.0
 
-//Define 6 stepper motors
+//Define 6 stepper motors and gripper position double
 AccelStepper stepper1;
 AccelStepper stepper2;
 AccelStepper stepper3;
 AccelStepper stepper4;
 AccelStepper stepper5;
 AccelStepper stepper6;
+double gripperPos = 0;
 
 char input[inputSize+1];
 
+//Define  motion parameters
+double accel1 = 750;
+double accel2 = 750;
+double accel3 = 750;
+double accel4 = 750;
+double accel5 = 750;
+double accel6 = 750;
+double vel1 = 100;
+double vel2 = 100;
+double vel3 = 100;
+double vel4 = 100;
+double vel5 = 100;
+double vel6 = 100;
+
 //Define rotation limis for each joint
-double lowerLim1= -90.0;
-double upperLim1= 90.0;
-double lowerLim2= -10.0;
-double upperLim2= 90.0;
-double lowerLim3= 0.0;
-double upperLim3= 135.0;
-double lowerLim4= -90.0;
-double upperLim4= 90.0;
-double lowerLim5= -90.0;
-double upperLim5= 90.0;
-double lowerLim6= -180.0;
-double upperLim6= 180.0;
+double minAngle1 = -90.0;
+double maxAngle1 = 90.0;
+double minAngle2 = -10.0;
+double maxAngle2 = 90.0;
+double minAngle3 = 0.0;
+double maxAngle3 = 135.0;
+double minAngle4 = -90.0;
+double maxAngle4 = 90.0;
+double minAngle5 = -90.0;
+double maxAngle5 = 90.0;
+double minAngle6 = -180.0;
+double maxAngle6 = 180.0;
 
 void setup(){
  
@@ -125,9 +137,12 @@ void setup(){
   stepper6.setMinPulseWidth(minPulseWidth);
   
 
-  Serial.begin(9600);
+  Serial.begin(57600);
   delay(2000);
 
+  //print the current parameters
+  printParams();
+      
   //Ask to home all axes
   Serial.println("Position is lost. Please type 'home' to home");
 
@@ -154,38 +169,4 @@ void loop(){
   stepper5.run();
   stepper6.run();
   delayMicroseconds(10);
-  
-}
-
-void setAccel(int id, double accel){
-  if (id == 1){ stepper1.setAcceleration(accel*gear1); }
-  else if (id == 2){ stepper2.setAcceleration(accel*gear2); }
-  else if (id == 3){ stepper3.setAcceleration(accel*gear3); }
-  else if (id == 4){ stepper4.setAcceleration(accel*gear4); }
-  else if (id == 5){ stepper5.setAcceleration(accel*gear5); }
-  else if (id == 6){ stepper6.setAcceleration(accel*gear6); }
-}
-void setVel(int id, double vel){
-  if (id == 1){ stepper1.setSpeed(vel*gear1); }
-  else if (id == 2){ stepper2.setSpeed(vel*gear2); }
-  else if (id == 3){ stepper3.setSpeed(vel*gear3); }
-  else if (id == 4){ stepper4.setSpeed(vel*gear4); }
-  else if (id == 5){ stepper5.setSpeed(vel*gear5); }
-  else if (id == 6){ stepper6.setSpeed(vel*gear6); }
-}
-void setMin(int id, double lim){
-  if (id == 1){ lowerLim1 = lim; }
-  else if (id == 2){ lowerLim2 = lim; }
-  else if (id == 3){ lowerLim3 = lim; }
-  else if (id == 4){ lowerLim4 = lim; }
-  else if (id == 5){ lowerLim5 = lim; }
-  else if (id == 6){ lowerLim6 = lim; }
-}
-void setMax(int id, double lim){
-  if (id == 1){ upperLim1 = lim; }
-  else if (id == 2){ upperLim2 = lim; }
-  else if (id == 3){ upperLim3 = lim; }
-  else if (id == 4){ upperLim4 = lim; }
-  else if (id == 5){ upperLim5 = lim; }
-  else if (id == 6){ upperLim6 = lim; }
 }

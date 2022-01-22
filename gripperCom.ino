@@ -3,8 +3,10 @@
 void gripperCommand(int degrees){
   if(degrees == 0){
     digitalWrite(25, LOW);
+    gripperPos = 0;
   } else {
     digitalWrite(25, HIGH);
+    gripperPos = 180;
   }
   
 }
